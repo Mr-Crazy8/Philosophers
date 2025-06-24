@@ -102,48 +102,50 @@ void	add_forks_back(t_forks_data **lst, t_forks_data *new)
 }
 
 
-void philo_init(t_philos_data *philos_info, int count_philo, t_data *data)
+void philo_init(t_philos_data **philos_info, int count_philo, t_data *data)
 {
     int i;
     t_philos_data *new_node;
-
     i = 0;
-    new_node = NULL;
+    
     while (i < count_philo)
     {
         new_node = malloc(sizeof(t_philos_data));
+        if (!new_node) // Add error checking
+            return; // or handle error appropriately
+        new_node->next = NULL;
         new_node->philos_index = i;
         new_node->eat_count = 0;
         new_node->last_meal_time = -1;
         new_node->left_fork = NULL;
         new_node->right_fork = NULL;
         new_node->shared_data = data;
-        add_philos_back(&philos_info , new_node);
+        add_philos_back(philos_info, new_node);
         i++;
     }
 }
 
-void forks_inti(t_forks_data  *forks, int forks_count)
+void forks_init(t_forks_data **forks, int forks_count)
 {
-
-    t_forks_data  *new_node;
-
-    new_node = NULL;
+    t_forks_data *new_node;
     int i = 0;
+    
     while (i < forks_count)
     {
         new_node = malloc(sizeof(t_forks_data));
+        if (!new_node) // Add error checking
+            return; // or handle error appropriately
+        new_node->next = NULL;
         new_node->fork_id = i;
-        pthread_mutex_init(&forks->mutex, NULL);
-        add_forks_back(&forks, new_node);
+        pthread_mutex_init(&new_node->mutex, NULL);
+        add_forks_back(forks, new_node);
         i++;
     }
 }
 
 
-void  data_init(t_data *data, char *argv[])
+void data_init(t_data *data, char *argv[])
 {
-    data = malloc(sizeof(t_data));
     data->num_of_philos = ft_atoi(argv[1]);
     data->time_to_die = ft_atoi(argv[2]);
     data->time_to_eat = ft_atoi(argv[3]);
@@ -153,23 +155,58 @@ void  data_init(t_data *data, char *argv[])
     else
         data->meals_required = -1;
     data->simulation_stop = 0;
-    data->start_time ; //get_time_of_day
+    data->start_time = time_in_ms();
     data->forks = NULL;
     data->philos = NULL;
-     pthread_mutex_init(&data->write_mutex, NULL);
+    pthread_mutex_init(&data->write_mutex, NULL);
 }
+void forks_assignment(t_philos_data *philos_info, t_forks_data *forks)
+{
+    t_philos_data *tmp;
+    t_forks_data *forks_tmp;
+
+    if (!philos_info || !forks)
+        return;
+
+    tmp = philos_info;
+    forks_tmp = forks;
+    while (tmp)
+    {
+        tmp->left_fork = forks_tmp;
+        if (forks_tmp->next != NULL)
+            tmp->right_fork = forks_tmp->next;
+        else
+            tmp->right_fork = forks;
+        forks_tmp = forks_tmp->next;
+        tmp = tmp->next;
+    }
+}
+
+long long time_in_ms()
+{
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+
 
 int main(int argc, char *argv[])
 {
-    t_philos_data *philos_info;
-    t_forks_data  forks;
+    t_philos_data *philos_info = NULL;
+    t_forks_data *forks = NULL;
     t_data data;
-
+    
     if (parsing(argc, argv) == 1)
         return(printf("parsing error\n"));
-
+    
     data_init(&data, argv);
-    philo_init(philos_info, ft_atoi(argv[1]), &data);
+    philo_init(&philos_info, ft_atoi(argv[1]), &data); 
     forks_init(&forks, ft_atoi(argv[1]));
+    forks_assignment(philos_info, forks);
+    
+    data.forks = forks;
+    data.philos = philos_info;
+    
     return 0;
 }
