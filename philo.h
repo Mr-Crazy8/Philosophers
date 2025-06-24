@@ -18,8 +18,9 @@ typedef struct s_data
     int time_to_sleep;         
     int meals_required;      
     int simulation_stop;         
-    long start_time;             
-    pthread_mutex_t write_mutex; 
+    long long start_time;             
+    pthread_mutex_t write_mutex;
+    pthread_mutex_t mutex;
     t_forks_data *forks;      
     t_philos_data *philos;      
 
@@ -40,8 +41,14 @@ typedef struct s_philos_data
 {
     int philos_index; ///id
     int eat_count; /// meal count
-    long last_meal_time; //last meal time
-    pthread_t *thread;   //thread
+    long long last_meal_time; //last meal time+
+    //-1 did not start
+    // 0 eating;
+    // 1 spling;
+    // 2 thinking;
+    // 3 dead;
+    int status;
+    pthread_t thread;   //thread
     t_forks_data *left_fork;
     t_forks_data *right_fork;
 

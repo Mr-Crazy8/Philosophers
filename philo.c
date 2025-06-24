@@ -111,15 +111,16 @@ void philo_init(t_philos_data **philos_info, int count_philo, t_data *data)
     while (i < count_philo)
     {
         new_node = malloc(sizeof(t_philos_data));
-        if (!new_node) // Add error checking
-            return; // or handle error appropriately
+        if (!new_node) 
+            return;
         new_node->next = NULL;
         new_node->philos_index = i;
         new_node->eat_count = 0;
-        new_node->last_meal_time = -1;
+        new_node->last_meal_time = time_in_ms();
         new_node->left_fork = NULL;
         new_node->right_fork = NULL;
         new_node->shared_data = data;
+        new_node->status = -1;
         add_philos_back(philos_info, new_node);
         i++;
     }
@@ -133,8 +134,8 @@ void forks_init(t_forks_data **forks, int forks_count)
     while (i < forks_count)
     {
         new_node = malloc(sizeof(t_forks_data));
-        if (!new_node) // Add error checking
-            return; // or handle error appropriately
+        if (!new_node)
+            return;
         new_node->next = NULL;
         new_node->fork_id = i;
         pthread_mutex_init(&new_node->mutex, NULL);
@@ -188,8 +189,66 @@ long long time_in_ms()
     gettimeofday(&time, NULL);
     return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
+void think(t_philos_data *philos)
+{
+    pthread_mutex_lock(&philos->shared_data->write_mutex);
+    printf("[%d] %d is thinking\n", time_in_ms(), philos->philos_index + 1);
+    pthread_mutex_unlock(&philos->shared_data->write_mutex);
 
+}
 
+void *philo_life(void *arg)
+{
+    t_philos_data *philos;
+
+    philos = (t_philos_data *)arg;
+
+    while (1)
+    {
+        pthread_mutex_lock(&philos->shared_data->mutex);
+        if (philos->shared_data->simulation_stop == 1)
+        {
+            pthread_mutex_unlock(&philos->shared_data->mutex);
+            break;
+        }
+        pthread_mutex_unlock(&philos->shared_data->mutex);
+        think(philos);
+
+        take_fork(philos);
+
+        eat(philos);
+
+        give_back_forks(philos);
+
+        take_a_nap(philos);
+    }
+
+    return NULL;
+}
+int creat_thread(t_philos_data *philos)
+{
+    t_philos_data *tmp;
+    int i;
+    tmp = philos;
+
+    while (tmp)
+    {
+        i = pthread_create(&tmp->thread, NULL, philo_life, tmp);
+        if (i != 0) 
+        {
+            printf("Thread creation failed\n");
+            return (1);
+        }
+        tmp = tmp->next;
+    }
+    tmp = philos;
+    while (tmp)
+    {
+        pthread_join(tmp->thread, NULL);
+        tmp = tmp->next;
+    }
+    return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -204,9 +263,9 @@ int main(int argc, char *argv[])
     philo_init(&philos_info, ft_atoi(argv[1]), &data); 
     forks_init(&forks, ft_atoi(argv[1]));
     forks_assignment(philos_info, forks);
-    
     data.forks = forks;
     data.philos = philos_info;
+    creat_thread(philos_info);
     
     return 0;
 }
