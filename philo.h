@@ -10,6 +10,16 @@
 #include <string.h>
 # include <limits.h>
 
+typedef struct s_forks_data
+{
+    int fork_id;
+    pthread_mutex_t mutex;
+
+    struct s_forks_data *next;
+
+} t_forks_data;
+
+
 typedef struct s_data
 {
     int num_of_philos;         
@@ -22,20 +32,9 @@ typedef struct s_data
     pthread_mutex_t write_mutex;
     pthread_mutex_t mutex;
     t_forks_data *forks;      
-    t_philos_data *philos;      
+    struct s_philos_data *philos;      
 
 } t_data;
-
-typedef struct s_forks_data
-{
-    int fork_id;
-    pthread_mutex_t mutex;
-
-    struct s_forks_data *next;
-
-} t_forks_data;
-
-
 
 typedef struct s_philos_data
 {
@@ -52,13 +51,33 @@ typedef struct s_philos_data
     t_forks_data *left_fork;
     t_forks_data *right_fork;
 
-    t_data *shared_data; 
+    t_data *data; 
 
     struct s_philos_data *next;
 
 } t_philos_data;
 
 
+
+
+
+
+
+
+
+static int	ft_space(const char **str, int sign);
+long	ft_atoi(const char *str);
+int  parsing(int argc, char *argv[]);
+void	add_philos_back(t_philos_data **lst, t_philos_data *new);
+void	add_forks_back(t_forks_data **lst, t_forks_data *new);
+void philo_init(t_philos_data **philos_info, int count_philo, t_data *data);
+void forks_init(t_forks_data **forks, int forks_count);
+void data_init(t_data *data, char *argv[]);
+void forks_assignment(t_philos_data *philos_info, t_forks_data *forks);
+long long time_in_ms();
+void think(t_philos_data *philos);
+void *philo_life(void *arg);
+int creat_thread(t_philos_data *philos);
 
 
 #endif
