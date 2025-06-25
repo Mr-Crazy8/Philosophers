@@ -159,6 +159,7 @@ void data_init(t_data *data, char *argv[])
     data->start_time = time_in_ms();
     data->forks = NULL;
     data->philos = NULL;
+    pthread_mutex_init(&data->mutex, NULL);
     pthread_mutex_init(&data->write_mutex, NULL);
 }
 void forks_assignment(t_philos_data *philos_info, t_forks_data *forks)
@@ -205,11 +206,11 @@ void take_fork(t_philos_data *philos)
         {
             pthread_mutex_lock(&philos->left_fork->mutex);
             pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index);
+            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
             pthread_mutex_unlock(&philos->data->write_mutex);
             pthread_mutex_lock(&philos->right_fork->mutex);
             pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index);
+            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
             pthread_mutex_unlock(&philos->data->write_mutex);
             
         }
@@ -218,11 +219,11 @@ void take_fork(t_philos_data *philos)
 
             pthread_mutex_lock(&philos->right_fork->mutex);
             pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index);
+            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
             pthread_mutex_unlock(&philos->data->write_mutex);
             pthread_mutex_lock(&philos->left_fork->mutex);
             pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index);
+            printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
             pthread_mutex_unlock(&philos->data->write_mutex);
         
         }
@@ -243,8 +244,25 @@ void give_back_forks(t_philos_data *philos)
             pthread_mutex_unlock(&philos->right_fork->mutex);
         }
 }
+void eat(t_philos_data *philos)
+{
+    pthread_mutex_lock(&philos->data->write_mutex);
+    printf("[%lld]  %d   is eating\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
+    pthread_mutex_unlock(&philos->data->write_mutex); 
+    philos->eat_count += 1;
+    philos->last_meal_time = time_in_ms();
+    philos->status = 0;
+    usleep(philos->data->time_to_eat * 1000);
+}
 
-
+void take_a_nap(t_philos_data *philos)
+{
+    pthread_mutex_lock(&philos->data->write_mutex);
+    printf("[%lld]  %d    is sleeping\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
+    pthread_mutex_unlock(&philos->data->write_mutex); 
+    philos->status = 1;
+    usleep(philos->data->time_to_sleep * 1000);
+}
 
 void *philo_life(void *arg)
 {
@@ -265,11 +283,11 @@ void *philo_life(void *arg)
 
         take_fork(philos);
 
-        // eat(philos);
+        eat(philos);
 
         give_back_forks(philos);
 
-        // take_a_nap(philos);
+        take_a_nap(philos);
     }
 
     return NULL;
