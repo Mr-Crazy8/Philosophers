@@ -116,7 +116,7 @@ void philo_init(t_philos_data **philos_info, int count_philo, t_data *data)
         new_node->next = NULL;
         new_node->philos_index = i;
         new_node->eat_count = 0;
-        new_node->last_meal_time = time_in_ms();
+        new_node->last_meal_time = data->start_time;
         new_node->left_fork = NULL;
         new_node->right_fork = NULL;
         new_node->data = data;
@@ -262,9 +262,11 @@ void give_back_forks(t_philos_data *philos)
 }
 void eat(t_philos_data *philos)
 {
-      if (philos->data->philos->status != 3)
+      if (philos->data->philos->status != 3 )
     {
 
+        if (philos->left_fork  != NULL  && philos->right_fork != NULL)
+        {
         pthread_mutex_lock(&philos->data->write_mutex);
         printf("[%lld]  %d   is eating\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
         pthread_mutex_unlock(&philos->data->write_mutex); 
@@ -272,6 +274,8 @@ void eat(t_philos_data *philos)
         philos->last_meal_time = time_in_ms();
         philos->status = 0;
         usleep(philos->data->time_to_eat * 1000);
+
+        }
     }
 
 }
@@ -292,7 +296,7 @@ int check_sim(t_philos_data *philos)
     int i;
 
     pthread_mutex_lock(&philos->data->mutex);
-    i = (philos->data->simulation_stop == 1);
+    i = philos->data->simulation_stop;
     pthread_mutex_unlock(&philos->data->mutex);
     return (i);
 }
@@ -320,38 +324,107 @@ void *philo_life(void *arg)
 
     return NULL;
 }
+
+
+int check_death(t_data *data)
+{
+    t_philos_data *tmp = data->philos;
+    long long current_time = time_in_ms();
+
+    while (tmp)
+    {
+        pthread_mutex_lock(&data->mutex);
+        if (current_time - tmp->last_meal_time > data->time_to_die)
+        {
+            data->simulation_stop = 1;
+            pthread_mutex_unlock(&data->mutex);
+            
+            pthread_mutex_lock(&data->write_mutex);
+            printf("[%lld] %d died\n", current_time - data->start_time, 
+                   tmp->philos_index + 1);
+            pthread_mutex_unlock(&data->write_mutex);
+            return 1;
+        }
+        pthread_mutex_unlock(&data->mutex);
+        tmp = tmp->next;
+    }
+    return 0;
+}
+
+int check_meals_complete(t_data *data)
+{
+    if (data->meals_required == -1)
+        return 0;
+
+    t_philos_data *tmp = data->philos;
+    int all_done = 1;
+
+    pthread_mutex_lock(&data->mutex);
+    while (tmp)
+    {
+        if (tmp->eat_count < data->meals_required)
+        {
+            all_done = 0;
+            break;
+        }
+        tmp = tmp->next;
+    }
+    
+    if (all_done)
+        data->simulation_stop = 1;
+    pthread_mutex_unlock(&data->mutex);
+    
+    return all_done;
+}
+
 void *monitor_task(void *arg)
 {
     t_data *data = (t_data *)arg;
-    t_philos_data *tmp;
 
-    tmp = data->philos;
+    while (1)
+    {
+        if (check_death(data) || check_meals_complete(data))
+            break;
+            
+        usleep(1); // Check every 1ms
+    }
+    
+    return NULL;
+}
 
-        while (tmp)
-        {
-            // if (data->meals_required != -1 && data->meals_required == data->philos->eat_count)
-            //     data->simulation_stop = 1;
+
+// void *monitor_task(void *arg)
+// {
+//     t_data *data = (t_data *)arg;
+//     t_philos_data *tmp;
+
+//     tmp = data->philos;
+
+//         while (tmp)
+//         {
+//             // if (data->meals_required != -1 && data->meals_required == data->philos->eat_count)
+//             //     data->simulation_stop = 1;
 
 
             
-            if (time_in_ms() - tmp->last_meal_time > data->time_to_die)
-            {
-                    pthread_mutex_lock(&data->write_mutex);
-                    printf("[%lld]  %d  died\n", time_in_ms() - data->start_time , tmp->philos_index+1);
-                    pthread_mutex_unlock(&data->write_mutex);
-                    data->philos->status = 3;
-                    data->simulation_stop = 1;
-                    break;
-            }
-            if (data->simulation_stop == 1)
-                break;
-            tmp = tmp->next;
-            if (tmp ==  NULL)
-                tmp = data->philos;
-        }
-    return NULL;
+//             if (time_in_ms() - tmp->last_meal_time > data->time_to_die)
+//             {
+//                     pthread_mutex_lock(&data->write_mutex);
+//                     printf("[%lld]  %d  died\n", time_in_ms() - data->start_time , tmp->philos_index+1);
+//                     pthread_mutex_unlock(&data->write_mutex);
+//                     data->philos->status = 3;
+//                     data->simulation_stop = 1;
+//                     break;
+//             }
+//             if (data->simulation_stop == 1)
+//                 break;
+//             tmp = tmp->next;
+//             if (tmp ==  NULL)
+//                 tmp = data->philos;
+//         }
+//     return NULL;
 
-}
+// }
 
 int creat_thread(t_philos_data *philos)
 {
