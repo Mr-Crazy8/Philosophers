@@ -2,7 +2,16 @@
 
 #include "philo.h"
 
+void ft_usleep(long long time)
+{
+    long long i = 100;
 
+    while (i < time)
+    {
+        usleep(100);
+        i += 100;
+    }
+}
 static int	ft_space(const char **str, int sign)
 {
 	while ((**str >= 9 && **str <= 13) || **str == 32)
@@ -205,7 +214,13 @@ void think(t_philos_data *philos)
         philos->status = 2;
     }
 }
-
+void print_status(t_philos_data *philos, const char *status)
+{
+    pthread_mutex_lock(&philos->data->write_mutex);
+    if (!philos->data->simulation_stop)
+        printf("[%lld] %d %s\n", time_in_ms() - philos->data->start_time, philos->philos_index + 1, status);
+    pthread_mutex_unlock(&philos->data->write_mutex);
+}
 
 void take_fork(t_philos_data *philos)
 {
@@ -215,28 +230,19 @@ void take_fork(t_philos_data *philos)
         if (philos->philos_index % 2 == 0)
         {
             pthread_mutex_lock(&philos->left_fork->mutex);
-            pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld] %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
-            pthread_mutex_unlock(&philos->data->write_mutex);
+            print_status(philos, "has taken a fork");
             if (philos->right_fork)
             {
                 pthread_mutex_lock(&philos->right_fork->mutex);
-                pthread_mutex_lock(&philos->data->write_mutex);
-                printf("[%lld]  %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
-                pthread_mutex_unlock(&philos->data->write_mutex);
+                print_status(philos, "has taken a fork");
             }
-            
         }
         else if (philos->philos_index % 2 != 0)
         {
             pthread_mutex_lock(&philos->right_fork->mutex);
-            pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld] %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
-            pthread_mutex_unlock(&philos->data->write_mutex);
+            print_status(philos, "has taken a fork");
             pthread_mutex_lock(&philos->left_fork->mutex);
-            pthread_mutex_lock(&philos->data->write_mutex);
-            printf("[%lld] %d  has taken a fork\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
-            pthread_mutex_unlock(&philos->data->write_mutex);
+            print_status(philos, "has taken a fork");
         
         }
     }
@@ -245,24 +251,22 @@ void take_fork(t_philos_data *philos)
 void give_back_forks(t_philos_data *philos)
 {
    
-    if (philos->philos_index % 2 == 0)
-        {
-            if (philos->right_fork)
-                pthread_mutex_unlock(&philos->right_fork->mutex);
-            if (philos->left_fork)
-                pthread_mutex_unlock(&philos->left_fork->mutex);
-        }
-    else if (philos->philos_index % 2 != 0)
-        {
-            if (philos->left_fork)
-                pthread_mutex_unlock(&philos->left_fork->mutex);
-            if (philos->right_fork)
-                pthread_mutex_unlock(&philos->right_fork->mutex);
-        }
+   if (philos->philos_index % 2 == 0)
+    {
+        if (philos->right_fork)
+            pthread_mutex_unlock(&philos->right_fork->mutex);
+        pthread_mutex_unlock(&philos->left_fork->mutex);
+    }
+    else
+    {
+        pthread_mutex_unlock(&philos->left_fork->mutex);
+        if (philos->right_fork)
+            pthread_mutex_unlock(&philos->right_fork->mutex);
+    }
 }
 void eat(t_philos_data *philos)
 {
-      if (philos->data->philos->status != 3 )
+    if (philos->left_fork && philos->right_fork)
     {
 
         if (philos->left_fork  != NULL  && philos->right_fork != NULL)
@@ -273,7 +277,7 @@ void eat(t_philos_data *philos)
         philos->eat_count += 1;
         philos->last_meal_time = time_in_ms();
         philos->status = 0;
-        usleep(philos->data->time_to_eat * 1000);
+        ft_usleep(philos->data->time_to_eat * 1000);
 
         }
     }
@@ -287,7 +291,7 @@ void take_a_nap(t_philos_data *philos)
         printf("[%lld]  %d    is sleeping\n", time_in_ms() - philos->data->start_time , philos->philos_index+1);
         pthread_mutex_unlock(&philos->data->write_mutex);
         philos->status = 1;
-        usleep(philos->data->time_to_sleep * 1000);
+        ft_usleep(philos->data->time_to_sleep * 1000);
 
 }
 
@@ -309,16 +313,10 @@ void *philo_life(void *arg)
 
     while (!check_sim(philos))
     {   
-        if (philos->status == 3)
-            break;
         think(philos);
-
         take_fork(philos);
-
         eat(philos);
-
         give_back_forks(philos);
-
         take_a_nap(philos);
     }
 
@@ -386,7 +384,7 @@ void *monitor_task(void *arg)
         if (check_death(data) || check_meals_complete(data))
             break;
             
-        usleep(1); // Check every 1ms
+        ft_usleep(100000); // Check every 1ms
     }
     
     return NULL;
