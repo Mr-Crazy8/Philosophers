@@ -62,10 +62,10 @@ typedef struct s_philos_data
 
 
 
+int check_death(t_data *data);
+int meals_count(t_data *data);
 
 
-
-static int	ft_space(const char **str, int sign);
 long	ft_atoi(const char *str);
 int  parsing(int argc, char *argv[]);
 void	add_philos_back(t_philos_data **lst, t_philos_data *new);
@@ -78,6 +78,13 @@ long long time_in_ms();
 void think(t_philos_data *philos);
 void *philo_life(void *arg);
 int creat_thread(t_philos_data *philos);
-
-
+int check_sim(t_philos_data *philos);
+void print_status(t_philos_data *philos, const char *status);
+void ft_usleep(long long time, t_philos_data *philos);
+void *monitor_task(void *arg);
+int check_meals_complete(t_data *data);
+void take_fork(t_philos_data *philos);
+void eat(t_philos_data *philos);
+void give_back_forks(t_philos_data *philos);
+void take_a_nap(t_philos_data *philos);
 #endif

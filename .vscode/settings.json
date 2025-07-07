@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "__mutex_base": "c",
+        "philo.h": "c"
     }
 }

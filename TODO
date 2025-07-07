@@ -1,0 +1,15 @@
+./philo  5 500 200 200
+
+./philo  5 450 200 200
+
+
+./philo 3 250 100 100
+
+more then 10ms
+anel-men@e3r7p1 Philosophers % ./philo  0 500 200 200
+parsing error
+zsh: segmentation fault  ./philo 0 500 200 200
+
+
+
+10 15 10

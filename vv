@@ -1,0 +1,78 @@
+4 310 200 100
+./philo 1 01  100 100
+
+./philo 1 250  60 60 
+
+./philo 1 650  60 60 
+
+anel-men@e3r7p1 Philosophers % ./philo 00   700  60 60  
+ThreadSanitizer:DEADLYSIGNAL
+==51755==ERROR: ThreadSanitizer: SEGV on unknown address 0x000000000030 (pc 0x000107c14af3 bp 0x7ffee7fee580 sp 0x7ffee7fee510 T474421)
+==51755==The signal is caused by a READ memory access.
+==51755==Hint: address points to the zero page.
+    #0 creat_thread philo.c:418 (philo:x86_64+0x100003af3)
+    #1 main philo.c:449 (philo:x86_64+0x100003db1)
+    #2 start <null>:2 (libdyld.dylib:x86_64+0x1acc8)
+
+==51755==Register values:
+rax = 0x0000000000000000  rbx = 0x0000000000000000  rcx = 0x0000000000000000  rdx = 0x0000000000000000  
+rdi = 0x0000000108ade400  rsi = 0x0000000000000000  rbp = 0x00007ffee7fee580  rsp = 0x00007ffee7fee510  
+ r8 = 0x0000000000000000   r9 = 0x0000000000000004  r10 = 0x00000001093bbd60  r11 = 0x000000000000002f  
+r12 = 0x0000000000000000  r13 = 0x0000000000000000  r14 = 0x0000000000000000  r15 = 0x0000000000000000  
+ThreadSanitizer can not provide additional info.
+SUMMARY: ThreadSanitizer: SEGV philo.c:418 in creat_thread
+==51755==ABORTING
+zsh: abort      ./philo 00 700 60 60
+
+anel-men@e3r7p1 Philosophers % ./philo 1 800 200 200
+0 1 is thinking
+0 1 has taken a fork
+900 1 died
+
+process with just main thread 
+process with multiple threading 
+race condition
+deadlock
+starvation
+mutex
+synchronization
+
+
+can i singal core process creat more then 1 Thread
+
+can we force the cpu core to creat more then 1 Thread
+
+what do you mean that Process is Heavy-weight and Thread is Light-weight
+
+
+what do you mean that Process is Higher creation overhead and Thread is Lower creation overhead
+
+what you mean by Theoretical Limits if The number isn't directly limited by cores
+
+
+what do you mean by Optimal Thread/Process Count
+
+
+so in Context Switching it use Thread Control Block (TCB)
+
+do i need to alloc for Thread-Local Storage (TLS) and if it will be in the heap and the heap is Shared Between Threads 
+
+
+can we make a signal Thread core to be multiThread 
+
+
+
+do we have one TCB for each thread in a process ?
+
+
+
+
+
+
+
+explain Simultaneous Multithreading 
+what is Pipelines in a Physical Core
+
+
+you say that "Architectural state (registers, program counter, etc.) is duplicated for each logical core."
+how does (SMT / Hyper‑Threading) do that
