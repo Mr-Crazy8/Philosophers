@@ -44,14 +44,14 @@ int check_death(t_data *data)
         {
             data->simulation_stop = 1;
             pthread_mutex_unlock(&data->mutex);
-            
             pthread_mutex_lock(&data->write_mutex);
             printf("%lld %d died\n", current_time - data->start_time, 
                    tmp->philos_index + 1);
             pthread_mutex_unlock(&data->write_mutex);
             return 1;
         }
-        pthread_mutex_unlock(&data->mutex);
+        else
+            pthread_mutex_unlock(&data->mutex);
         tmp = tmp->next;
     }
     return 0;

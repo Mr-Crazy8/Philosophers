@@ -4,10 +4,12 @@ void ft_usleep(long long time, t_philos_data *philos)
 {
     long long start = time_in_ms();
     
+     pthread_mutex_lock(&philos->data->mutex);
     while ((time_in_ms() - start) < time && philos->status != 3 && philos->data->simulation_stop == 0)
     {
             usleep(100);
     }
+    pthread_mutex_unlock(&philos->data->mutex);
 }
 
 void print_status(t_philos_data *philos, const char *status)
