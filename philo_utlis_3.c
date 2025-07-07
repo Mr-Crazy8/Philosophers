@@ -41,7 +41,7 @@ void eat(t_philos_data *philos)
 {
     if (philos->right_fork == NULL)
         ft_usleep(philos->data->time_to_die, philos);
-    if (philos->status != 3 && philos->data->simulation_stop != 1)
+    if (philos->status != 3 && !check_sim(philos))
     {
         print_status(philos, "is eating");
         pthread_mutex_lock(&philos->data->mutex);
