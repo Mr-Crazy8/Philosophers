@@ -1,0 +1,12 @@
+# Object files
+*.o
+
+# Executable
+philo
+
+# Debug symbols
+*.dSYM/
+
+# Temporary files
+*~
+.DS_Store

@@ -10,17 +10,41 @@ void *philo_life(void *arg)
     philos = (t_philos_data *)arg;
 
     if (philos->philos_index % 2 == 1)
-        ft_usleep(philos->data->time_to_eat / 2, philos);
+    {
+        // More aggressive staggering for large numbers of philosophers
+        // Spread odd philosophers across multiple cycles to prevent clustering
+        long long cycle_time = philos->data->time_to_eat + philos->data->time_to_sleep;
+        long long stagger_delay;
+        
+        if (philos->data->num_of_philos > 20)
+        {
+            // For large numbers, spread across 2-3 cycles
+            stagger_delay = (philos->philos_index * cycle_time * 2) / philos->data->num_of_philos;
+        }
+        else
+        {
+            // For smaller numbers, use original approach
+            stagger_delay = philos->data->time_to_eat / 2;
+        }
+        
+        ft_usleep(stagger_delay, philos);
+    }
 
     while (!check_sim(philos))
     {   
         if (!check_sim(philos))
             think(philos);
         if (!check_sim(philos))
+        {
             take_fork(philos);
-        if (!check_sim(philos))
-            eat(philos);
-        give_back_forks(philos);
+            if (!check_sim(philos))
+            {
+                eat(philos);
+                give_back_forks(philos);
+            }
+            else
+                give_back_forks(philos);
+        }
         if (!check_sim(philos))
             take_a_nap(philos);
     }
