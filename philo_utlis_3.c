@@ -41,16 +41,21 @@ void eat(t_philos_data *philos)
 {
     if (philos->right_fork == NULL)
         ft_usleep(philos->data->time_to_die, philos);
-    if (philos->status != 3 && philos->data->simulation_stop != 1)
+    if (philos->status != 3)
     {
-        print_status(philos, "is eating");
         pthread_mutex_lock(&philos->data->mutex);
-        philos->last_meal_time = time_in_ms();
-        philos->eat_count += 1;
-        pthread_mutex_unlock(&philos->data->mutex);
-        
-        philos->status = 0;
-        ft_usleep(philos->data->time_to_eat, philos);
+        if (philos->data->simulation_stop != 1)
+        {
+            pthread_mutex_unlock(&philos->data->mutex);
+            print_status(philos, "is eating");
+            pthread_mutex_lock(&philos->data->mutex);
+            philos->last_meal_time = time_in_ms();
+            philos->eat_count += 1;
+            pthread_mutex_unlock(&philos->data->mutex);
+            
+            philos->status = 0;
+            ft_usleep(philos->data->time_to_eat, philos);
+        }
     }
 }
 
