@@ -10,11 +10,9 @@ void *philo_life(void *arg)
     philos = (t_philos_data *)arg;
 
     if (philos->philos_index % 2 == 1)
-        ft_usleep(philos->data->time_to_eat / 2, philos);
-
+        ft_usleep(philos->data->time_to_eat / 2 , philos);
     while (!check_sim(philos))
     {   
-        if (!check_sim(philos))
             think(philos);
         if (!check_sim(philos))
             take_fork(philos);
