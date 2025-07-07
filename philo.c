@@ -9,25 +9,19 @@ void *philo_life(void *arg)
 
     philos = (t_philos_data *)arg;
 
-    if (philos->philos_index % 2 == 1)
+    // Better staggering for large numbers of philosophers
+    if (philos->data->num_of_philos > 10)
     {
-        // More aggressive staggering for large numbers of philosophers
-        // Spread odd philosophers across multiple cycles to prevent clustering
-        long long cycle_time = philos->data->time_to_eat + philos->data->time_to_sleep;
-        long long stagger_delay;
-        
-        if (philos->data->num_of_philos > 20)
-        {
-            // For large numbers, spread across 2-3 cycles
-            stagger_delay = (philos->philos_index * cycle_time * 2) / philos->data->num_of_philos;
-        }
-        else
-        {
-            // For smaller numbers, use original approach
-            stagger_delay = philos->data->time_to_eat / 2;
-        }
-        
+        // Stagger all philosophers to ensure better initial distribution
+        // Use smaller intervals but spread across more philosophers
+        long long stagger_delay = (philos->philos_index * philos->data->time_to_eat) / 
+                                 (philos->data->num_of_philos / 2);
         ft_usleep(stagger_delay, philos);
+    }
+    else if (philos->philos_index % 2 == 1)
+    {
+        // For smaller numbers, use original approach for odd philosophers only
+        ft_usleep(philos->data->time_to_eat / 2, philos);
     }
 
     while (!check_sim(philos))

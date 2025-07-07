@@ -8,16 +8,17 @@ void think(t_philos_data *philos)
             // Dynamic thinking time based on number of philosophers
             long long think_time = 10;
             
-            if (philos->data->num_of_philos > 20)
+            if (philos->data->num_of_philos > 10)
             {
-                // For large numbers, use much longer thinking time to prevent monopolization
-                // Make thinking time proportional to the contention level
-                think_time = (philos->data->time_to_eat * philos->data->num_of_philos) / 20;
-                // Add significant philosopher-specific variation to break patterns
-                think_time += (philos->philos_index % 30);
-                // Ensure minimum thinking time is substantial
-                if (think_time < 50)
-                    think_time = 50;
+                // For larger numbers, use longer thinking time to reduce contention
+                think_time = (philos->data->time_to_eat * philos->data->num_of_philos) / 50;
+                // Add variation to break patterns but keep it moderate
+                think_time += (philos->philos_index % 15);
+                // Ensure reasonable bounds
+                if (think_time < 20)
+                    think_time = 20;
+                if (think_time > 60)
+                    think_time = 60;
             }
             
             ft_usleep(think_time, philos);
