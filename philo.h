@@ -66,7 +66,7 @@ int check_death(t_data *data);
 int meals_count(t_data *data);
 
 
-long	ft_atoi(const char *str);
+long	ft_atoi(char *str);
 int  parsing(int argc, char *argv[]);
 void	add_philos_back(t_philos_data **lst, t_philos_data *new);
 void	add_forks_back(t_forks_data **lst, t_forks_data *new);

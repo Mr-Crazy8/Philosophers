@@ -13,3 +13,9 @@ zsh: segmentation fault  ./philo 0 500 200 200
 
 
 10 15 10
+
+Dijkstra's solution
+Resource hierarchy solution
+Arbitrator solution
+Limiting the number of diners in the table
+Chandy/Misra solution

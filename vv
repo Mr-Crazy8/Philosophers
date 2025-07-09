@@ -8,6 +8,9 @@
 
 ./philo 1 650  60 60 
 
+./philo 40 420 200 200
+
+
 anel-men@e3r7p1 Philosophers % ./philo 00   700  60 60  
 ThreadSanitizer:DEADLYSIGNAL
 ==51755==ERROR: ThreadSanitizer: SEGV on unknown address 0x000000000030 (pc 0x000107c14af3 bp 0x7ffee7fee580 sp 0x7ffee7fee510 T474421)

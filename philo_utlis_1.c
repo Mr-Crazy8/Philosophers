@@ -44,7 +44,13 @@ void forks_init(t_forks_data **forks, int forks_count)
 
 void data_init(t_data *data, char *argv[])
 {
-    data->num_of_philos = ft_atoi(argv[1]);
+    if (ft_atoi(argv[1]) != 0)
+        data->num_of_philos = ft_atoi(argv[1]);
+    else
+        {
+            printf("parsing error\n");
+        return ; 
+        }
     if (data->num_of_philos == 0)
     {
         printf("parsing error\n");

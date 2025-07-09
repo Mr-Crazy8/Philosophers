@@ -1,44 +1,30 @@
 #include "philo.h"
 
-static int	ft_space(const char **str, int sign)
-{
-	while ((**str >= 9 && **str <= 13) || **str == 32)
-		(*str)++;
-	if (**str == '-' || **str == '+')
-	{
-		if (**str == '-')
-			sign *= -1;
-		(*str)++;
-	}
-	return (sign);
-}
-
-long	ft_atoi(const char *str)
+long	ft_atoi(char *str)
 {
 	int		i;
-	int		sign;
+	int		signe;
 	long	res;
 
-	sign = 1;
 	i = 0;
+	signe = 1;
 	res = 0;
-	sign = ft_space(&str, sign);
-	while (str[i] >= '0' && str[i] <= '9')
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
 	{
-		if (sign == 1)
-		{
-			if (res > (LONG_MAX - (str[i] - '0')) / 10)
-				return (LONG_MAX);
-		}
-		else
-		{
-			if (res > (LONG_MAX - (str[i] - '0')) / 10)
-				return (LONG_MIN);
-		}
+		if (str[i] == '-')
+			signe *= -1;
+		i++;
+	}
+	while (str[i] && str[i] >= '0' && str[i] <= '9')
+	{
 		res = res * 10 + (str[i] - '0');
 		i++;
 	}
-	return (res * sign);
+	if (str[i] && (str[i] < '0' || str[i] > '9'))
+		return (LONG_MAX);
+	return (res * signe);
 }
 
 int  parsing(int argc, char *argv[])

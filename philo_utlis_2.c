@@ -1,5 +1,6 @@
 #include "philo.h"
 
+
 void ft_usleep(long long time, t_philos_data *philos)
 {
     long long start = time_in_ms();
@@ -22,20 +23,18 @@ void print_status(t_philos_data *philos, const char *status)
 
 void give_back_forks(t_philos_data *philos)
 {
-
-        if (philos->data->num_of_philos == 1)
-             return;
-        if (philos->philos_index % 2 == 0)
-            {
-
-                pthread_mutex_unlock(&philos->right_fork->mutex);
-                pthread_mutex_unlock(&philos->left_fork->mutex);
-            }
-            else
-            {
-                pthread_mutex_unlock(&philos->left_fork->mutex);
-                pthread_mutex_unlock(&philos->right_fork->mutex);
-            }
+    if (philos->data->num_of_philos == 1)
+            return;
+    if (philos->philos_index % 2 == 0)
+        {
+            pthread_mutex_unlock(&philos->right_fork->mutex);
+            pthread_mutex_unlock(&philos->left_fork->mutex);
+        }
+    else
+        {
+            pthread_mutex_unlock(&philos->left_fork->mutex);
+            pthread_mutex_unlock(&philos->right_fork->mutex);
+        }
 }
 
 int check_sim(t_philos_data *philos)
@@ -55,7 +54,9 @@ void *monitor_task(void *arg)
     {
         if (check_death(data) || check_meals_complete(data))
             break;
-        ft_usleep(1, data->philos);
+        // usleep(1);
+       ft_usleep(1, data->philos);
+
     }
     return NULL;
 }

@@ -8,17 +8,13 @@ void *philo_life(void *arg)
     t_philos_data *philos;
 
     philos = (t_philos_data *)arg;
-
-    if (philos->philos_index % 2 == 1)
+    if ((philos->philos_index + 1 )% 2 == 1)
         ft_usleep(philos->data->time_to_eat / 2 , philos);
     while (!check_sim(philos))
     {   
             think(philos);
         if (!check_sim(philos))
-            take_fork(philos);
-        if (!check_sim(philos))
             eat(philos);
-        give_back_forks(philos);
         if (!check_sim(philos))
             take_a_nap(philos);
     }
@@ -99,7 +95,8 @@ int creat_thread(t_philos_data *philos)
         tmp = tmp->next;
     }
     tmp = philos;
-    i = pthread_create(&monitor_thread, NULL, monitor_task, tmp->data);
+    if (tmp != NULL)
+        i = pthread_create(&monitor_thread, NULL, monitor_task, tmp->data);
     if (i != 0) 
     {
             printf("Thread creation failed\n");
@@ -123,7 +120,7 @@ int main(int argc, char *argv[])
     
     if (parsing(argc, argv) == 1)
         return(printf("parsing error\n"));
-    
+
     data_init(&data, argv);
     philo_init(&philos_info, ft_atoi(argv[1]), &data); 
     forks_init(&forks, ft_atoi(argv[1]));
