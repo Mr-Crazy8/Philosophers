@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:36:34 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/10 23:44:42 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/10 23:58:34 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	clean_all(t_data *data)
 		tp = forks;
 		forks = forks->next;
 		pthread_mutex_destroy(&tp->mutex);
-		free(temp);
+		free(tp);
 	}
 	pthread_mutex_destroy(&data->mutex);
 	pthread_mutex_destroy(&data->write_mutex);
