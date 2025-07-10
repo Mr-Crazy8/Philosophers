@@ -38,12 +38,22 @@ int  parsing(int argc, char *argv[])
    while (argv && argv[i])
    {
         j = 0;
+
+			
         while (argv[i][j])
         {
            if (!(argv[i][j] >= '0' && argv[i][j] <= '9'))
                 return(1);
             j++;
         }
+		long value = ft_atoi(argv[i]);
+        if (value == LONG_MAX || value <= 0)
+            return 1;
+		
+		 if (i == 1 && value > 200) // Too many philosophers
+            return 1;
+        if (i >= 2 && i <= 4 && value < 60) // Times too short
+            return 1;
         i++;
    }
     return 0;

@@ -26,7 +26,7 @@ void take_fork(t_philos_data *philos)
         pthread_mutex_lock(&philos->right_fork->mutex);
         print_status(philos, "has taken a fork");
     }
-    else if (philos->philos_index % 2 != 0)
+    else
     {
         pthread_mutex_lock(&philos->right_fork->mutex);
         print_status(philos, "has taken a fork");
@@ -41,6 +41,8 @@ void eat(t_philos_data *philos)
     take_fork(philos);
     if (philos->right_fork == NULL)
         ft_usleep(philos->data->time_to_die, philos);
+    else
+    {
     pthread_mutex_lock(&philos->data->mutex);
     philos->last_meal_time = time_in_ms();
     philos->eat_count += 1;
@@ -49,6 +51,7 @@ void eat(t_philos_data *philos)
     philos->status = 0;
     ft_usleep(philos->data->time_to_eat, philos);
     give_back_forks(philos);
+    }
 }
 
 void take_a_nap(t_philos_data *philos)
