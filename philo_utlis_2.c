@@ -54,9 +54,7 @@ void *monitor_task(void *arg)
     {
         if (check_death(data) || check_meals_complete(data))
             break;
-        // usleep(1);
-       ft_usleep(1, data->philos);
-
+        usleep(1000);
     }
     return NULL;
 }

@@ -111,7 +111,30 @@ int creat_thread(t_philos_data *philos)
     pthread_join(monitor_thread, NULL);
     return 0;
 }
+void clean_all(t_data *data)
+{
+    t_philos_data *philo;
+    t_forks_data *forks;
 
+    philo = data->philos;
+    forks = data->forks;
+
+    while(philo)
+    {
+        t_philos_data *temp = philo;
+        philo = philo->next;
+        free(temp);
+    }
+     while (forks)
+    {
+        t_forks_data *temp = forks;
+        forks = forks->next;
+        pthread_mutex_destroy(&temp->mutex);
+        free(temp);
+    }
+    pthread_mutex_destroy(&data->mutex);
+    pthread_mutex_destroy(&data->write_mutex);
+}
 int main(int argc, char *argv[])
 {
     t_philos_data *philos_info = NULL;
@@ -128,6 +151,6 @@ int main(int argc, char *argv[])
     data.forks = forks;
     data.philos = philos_info;
     creat_thread(philos_info);
-    
+    clean_all(&data);
     return 0;
 }
