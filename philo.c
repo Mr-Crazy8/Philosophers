@@ -36,12 +36,9 @@ int check_death(t_data *data)
         
         if (current_time - last_meal > data->time_to_die)
         {
-            data->simulation_stop = 1;
-            pthread_mutex_lock(&data->write_mutex);
-            printf("%lld %d died\n", current_time - data->start_time, 
-                   tmp->philos_index + 1);
-            pthread_mutex_unlock(&data->write_mutex);
             pthread_mutex_unlock(&data->mutex);
+            print_status(tmp, "died");
+            data->simulation_stop = 1;
             return 1;
         }
         else

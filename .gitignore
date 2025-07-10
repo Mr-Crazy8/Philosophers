@@ -1,0 +1,9 @@
+# Build artifacts
+*.o
+philo
+philo.dSYM/
+test.dSYM/
+
+# Temporary files
+*~
+.DS_Store
