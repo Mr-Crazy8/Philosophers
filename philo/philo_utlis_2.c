@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:05:41 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/10 23:51:46 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:01:12 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	check_sim(t_philos_data *philos)
 {
 	int	stop;
 
+	if (philos == NULL)
+		return (1);
 	pthread_mutex_lock(&philos->data->mutex);
 	stop = philos->data->simulation_stop;
 	pthread_mutex_unlock(&philos->data->mutex);

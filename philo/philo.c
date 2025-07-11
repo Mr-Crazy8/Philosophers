@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 22:36:05 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 10:22:13 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:04:29 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,22 +84,25 @@ int	creat_thread(t_philos_data *philos)
 {
 	t_philos_data	*tmp;
 	int				i;
+	int				j;
 	pthread_t		monitor_thread;
 
 	tmp = philos;
 	i = 0;
+	j = 0;
 	while (tmp)
 	{
 		i = pthread_create(&tmp->thread, NULL, philo_life, tmp);
 		if (i != 0)
-			return (print_error());
+			return (print_error(j, tmp));
 		tmp = tmp->next;
+		j++;
 	}
 	tmp = philos;
 	if (tmp != NULL)
 		i = pthread_create(&monitor_thread, NULL, monitor_task, tmp->data);
 	if (i != 0)
-		return (print_error());
+		return (print_error_m(tmp));
 	join_all_threads(philos, monitor_thread);
 	return (0);
 }
@@ -114,13 +117,20 @@ int	main(int argc, char *argv[])
 		return (printf("parsing error\n"));
 	philos_info = NULL;
 	forks = NULL;
-	data_init(&data, argv);
-	philo_init(&philos_info, ft_atoi(argv[1]), &data);
-	forks_init(&forks, ft_atoi(argv[1]));
+	if (data_init(&data, argv) == 1)
+		return (1);
+	if (philo_init(&philos_info, ft_atoi(argv[1]), &data))
+		return (clean_error_philo(philos_info), 1);
+	if (forks_init(&forks, ft_atoi(argv[1])) == 1)
+	{
+		clean_error_philo(philos_info);
+		return (1);
+	}
 	forks_assignment(philos_info, forks);
 	data.forks = forks;
 	data.philos = philos_info;
-	creat_thread(philos_info);
+	if (creat_thread(philos_info) == 1)
+		return (1);
 	clean_all(&data);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:09:56 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/10 23:34:48 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 19:08:20 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void	think(t_philos_data *philos)
 	print_status(philos, "is thinking");
 	if (philos->data->num_of_philos % 2 == 1)
 		ft_usleep(10, philos);
-	philos->status = 2;
 }
 
 void	take_fork(t_philos_data *philos)
@@ -58,7 +57,6 @@ void	eat(t_philos_data *philos)
 		philos->eat_count += 1;
 		pthread_mutex_unlock(&philos->data->mutex);
 		print_status(philos, "is eating");
-		philos->status = 0;
 		ft_usleep(philos->data->time_to_eat, philos);
 		give_back_forks(philos);
 	}
@@ -67,12 +65,26 @@ void	eat(t_philos_data *philos)
 void	take_a_nap(t_philos_data *philos)
 {
 	print_status(philos, "is sleeping");
-	philos->status = 1;
 	ft_usleep(philos->data->time_to_sleep, philos);
 }
 
-int	print_error(void)
+int	print_error(int j, t_philos_data *tmp)
 {
+	int				i;
+	t_philos_data	*tp;
+
+	tp = tmp;
+	i = 0;
+	pthread_mutex_lock(&tp->data->mutex);
+	tp->data->simulation_stop = 1;
+	pthread_mutex_unlock(&tp->data->mutex);
+	tp = tmp;
+	while (i < j && tp != NULL)
+	{
+		pthread_join(tp->thread, NULL);
+		tp = tp->next;
+		i++;
+	}
 	printf("Thread creation failed\n");
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:12:33 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 10:21:32 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 20:20:08 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ typedef struct s_philos_data
 	int						philos_index;
 	int						eat_count;
 	long long				last_meal_time;
-	int						status;
 	pthread_t				thread;
 	t_forks_data			*left_fork;
 	t_forks_data			*right_fork;
@@ -56,15 +55,14 @@ typedef struct s_philos_data
 }	t_philos_data;
 
 int			check_death(t_data *data);
-int			meals_count(t_data *data);
 long		ft_atoi(char *str);
 int			parsing(int argc, char *argv[]);
 void		add_philos_back(t_philos_data **lst, t_philos_data *new);
 void		add_forks_back(t_forks_data **lst, t_forks_data *new);
-void		philo_init(t_philos_data **philos_info,
+int			philo_init(t_philos_data **philos_info,
 				int count_philo, t_data *data);
-void		forks_init(t_forks_data **forks, int forks_count);
-void		data_init(t_data *data, char *argv[]);
+int			forks_init(t_forks_data **forks, int forks_count);
+int			data_init(t_data *data, char *argv[]);
 void		forks_assignment(t_philos_data *philos_info, t_forks_data *forks);
 long long	time_in_ms(void);
 void		think(t_philos_data *philos);
@@ -80,6 +78,10 @@ void		eat(t_philos_data *philos);
 void		give_back_forks(t_philos_data *philos);
 void		take_a_nap(t_philos_data *philos);
 int			parsing_helper(char *argv[], int *i);
-int			print_error(void);
+int			print_error(int j, t_philos_data *tmp);
 void		clean_all(t_data *data);
+int			print_error_m(t_philos_data *tmp);
+void		clean_error_philo(t_philos_data	*philo);
+void		clean_error(t_forks_data **forks, int start);
+int			print_error_m(t_philos_data *tmp);
 #endif
