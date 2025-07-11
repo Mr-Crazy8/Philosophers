@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:12:33 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 10:09:46 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 10:21:32 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
 # include <limits.h>
 
 typedef struct s_forks_data
