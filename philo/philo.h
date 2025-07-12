@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:12:33 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 20:20:08 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:12:44 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ typedef struct s_forks_data
 
 typedef struct s_data
 {
-	int						num_of_philos;
-	int						time_to_die;
-	int						time_to_eat;
-	int						time_to_sleep;
-	int						meals_required;
+	long					num_of_philos;
+	long					time_to_die;
+	long					time_to_eat;
+	long					time_to_sleep;
+	long					meals_required;
 	int						simulation_stop;
 	long long				start_time;
 	pthread_mutex_t			write_mutex;

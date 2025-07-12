@@ -6,11 +6,23 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 22:50:44 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 20:25:13 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:19:40 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	atoi_helper(char *str, int *i, int *signe)
+{
+	while (str[*i] == ' ' || (str[*i] >= 9 && str[*i] <= 13))
+		(*i)++;
+	if (str[*i] == '-' || str[*i] == '+')
+	{
+		if (str[*i] == '-')
+			*signe *= -1;
+		(*i)++;
+	}
+}
 
 long	ft_atoi(char *str)
 {
@@ -21,18 +33,13 @@ long	ft_atoi(char *str)
 	i = 0;
 	signe = 1;
 	res = 0;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			signe *= -1;
-		i++;
-	}
+	atoi_helper(str, &i, &signe);
 	while (str[i] && str[i] >= '0' && str[i] <= '9')
 	{
-		if (res > (LONG_MAX - (str[i] - '0')) / 10)
-            return (LONG_MAX);
+		if (res > LONG_MAX / 10)
+			return (LONG_MAX);
+		if (res == LONG_MAX / 10 && (str[i] - '0') > LONG_MAX % 10)
+			return (LONG_MAX);
 		res = res * 10 + (str[i] - '0');
 		i++;
 	}
@@ -98,24 +105,4 @@ void	add_forks_back(t_forks_data **lst, t_forks_data *new)
 	while (temp->next != NULL)
 		temp = temp->next;
 	temp->next = new;
-}
-
-void	*philo_life(void *arg)
-{
-	t_philos_data	*philos;
-
-	philos = (t_philos_data *)arg;
-	if (check_sim(philos))
-		return (NULL);
-	if ((philos->philos_index + 1) % 2 == 1)
-		ft_usleep(philos->data->time_to_eat / 2, philos);
-	while (!check_sim(philos))
-	{
-		think(philos);
-		if (!check_sim(philos))
-			eat(philos);
-		if (!check_sim(philos))
-			take_a_nap(philos);
-	}
-	return (NULL);
 }

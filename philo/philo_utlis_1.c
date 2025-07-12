@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:00:23 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 20:42:30 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:11:41 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int	data_init(t_data *data, char *argv[])
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
-	// printf("data->time_to_die == [%ld]\n");
 	if (argv[5] != NULL)
 		data->meals_required = ft_atoi(argv[5]);
 	else

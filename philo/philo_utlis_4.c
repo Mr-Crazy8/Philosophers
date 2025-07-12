@@ -6,7 +6,7 @@
 /*   By: anel-men <anel-men@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/10 23:36:34 by anel-men          #+#    #+#             */
-/*   Updated: 2025/07/11 20:46:37 by anel-men         ###   ########.fr       */
+/*   Updated: 2025/07/11 21:10:18 by anel-men         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,8 @@ int	parsing_helper(char *argv[], int *i)
 	long	value;
 
 	value = ft_atoi(argv[*i]);
-	printf("here  [%ld]\n", value);
 	if (value >= LONG_MAX || value <= 0)
 		return (1);
-	// if (*i == 1 && value > 200)
-	// 	return (1);
-	// if (*i >= 2 && *i <= 4 && value < 60)
-	// 	return (1);
 	return (0);
 }
 
